@@ -67,12 +67,15 @@ class OllamaWorker(QThread):
                 "prompt": final_prompt,
                 "stream": True,
                 "options": {
-                    "num_gpu": 99999 if self.use_gpu else 0,  # Offload all layers to GPU if use_gpu is True
+                    # Set num_gpu to 1 if use_gpu is True; otherwise set it to 0.
+                    "num_gpu": 1 if self.use_gpu else 0,
                     "main_gpu": 0,
                     "low_vram": False,
                     "temperature": 0.7 if self.mode == "deepthink" else 0.5,
-                    "max_tokens": -1 if self.continue_context else 2048
+                    # Adjust max_tokens based on context continuation.
+                    "max_tokens": -1 if self.continue_context else 4096
                 }
+
             }
             print(f"Sending payload: {json.dumps(payload, indent=2)}")
 
@@ -138,7 +141,6 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("ElHabashy AI Assistant")
         self.setGeometry(100, 100, 1000, 800)
         self.models = [
-            "ALIENTELLIGENCE/pythonconsultantv2:latest",
             "qwen2.5-coder:latest",
             "deepseek-r1:latest",
             "qwen2.5-coder:3b",
@@ -257,7 +259,6 @@ class MainWindow(QMainWindow):
         self.models = self.get_installed_models()
         if not self.models:
             self.models = [
-                "ALIENTELLIGENCE/pythonconsultantv2:latest",
                 "qwen2.5-coder:latest",
                 "deepseek-r1:latest",
                 "qwen2.5-coder:3b",
